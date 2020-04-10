@@ -52,6 +52,6 @@ __global__ void life_kernel(int * source_domain, int * dest_domain,
     int x = (unsigned int)tx % domain_x;
     int y = (unsigned int)ty % domain_y;
 
-    dest_domain[y * domain_x + x];
+    dest_domain[y * domain_x + x] = myself;
 }
 
