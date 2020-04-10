@@ -51,7 +51,7 @@ int main(int argc, char ** argv)
     
     int cells_per_word = 1;
     
-    int steps = 2;	// Change this to vary the number of game rounds
+    int steps = 20;	// Change this to vary the number of game rounds
     
     int threads_per_block = 128;
     int blocks_x = (domain_x + threads_per_block * cells_per_word - 1) / threads_per_block * cells_per_word;
