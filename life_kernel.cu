@@ -57,8 +57,7 @@ __global__ void life_kernel(int * source_domain, int * dest_domain,
 
 
     // Read cell
-    //int myself = read_cell(source_domain, tx, ty, 0, 0,
-	 //                      domain_x, domain_y);
+    int myself = read_cell(data_block, threadIdx.x, threadIdx.y, 0, 0, blockDim.x, blockDim.y)
     
     // TODO: Read the 8 neighbors and count number of blue and red
     int blue = 0, red = 0;
