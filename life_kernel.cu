@@ -16,17 +16,56 @@ __global__ void life_kernel(int * source_domain, int * dest_domain,
     int ty = blockIdx.y * blockDim.y + threadIdx.y;
     
     if(tx >= domain_x || ty >= domain_y) return;
-    
+
+    __shared__ int data_block[];
+
+    data_block[(threadIdx.y+1) * blockDim.x + (threadIdx.x+1)] = read_cell(source_domain, tx, ty, 0, 0,
+        domain_x, domain_y);
+
+    if(threadIdx.y == 0){
+        data_block[threadIdx.y * blockDim.x + (threadIdx.x+1)] = read_cell(source_domain, tx, ty, 0, -1,
+            domain_x, domain_y);
+    }
+    if(threadIdx.x == 0){
+        data_block[(threadIdx.y+1) * blockDim.x + threadIdx.x] = read_cell(source_domain, tx, ty, -1, 0,
+            domain_x, domain_y);
+    }
+    if(threadIdx.y == blockDim.y-1){
+        data_block[(threadIdx.y+2) * blockDim.x + (threadIdx.x+1)] = read_cell(source_domain, tx, ty, 0, +1,
+            domain_x, domain_y);
+    }
+    if(threadIdx.x == blockDim.x-1){
+        data_block[(threadIdx.y+1) * blockDim.x + (threadIdx.x+2)] = read_cell(source_domain, tx, ty, +1, 0,
+            domain_x, domain_y);
+    }
+    if(threadIdx.y == 0 && threadIdx.x == 0){
+        data_block[threadIdx.y * blockDim.x + threadIdx.x] = read_cell(source_domain, tx, ty, -1, -1,
+            domain_x, domain_y);
+    }
+    if(threadIdx.y == 0 && threadIdx.x == blockDim.x-1){
+        data_block[threadIdx.y * blockDim.x + (threadIdx.x+2)] = read_cell(source_domain, tx, ty, -1, +1,
+            domain_x, domain_y);
+    }
+    if(threadIdx.y == blockDim.y-1 && threadIdx.x == 0){
+        data_block[(threadIdx.y+2) * blockDim.x + threadIdx.x] = read_cell(source_domain, tx, ty, +1, -1,
+            domain_x, domain_y);
+    }
+    if(threadIdx.y == blockDim.y-1 && threadIdx.x == blockDim.x-1){
+        data_block[(threadIdx.y+2) * blockDim.x + (threadIdx.x+2)] = read_cell(source_domain, tx, ty, +1, +1,
+            domain_x, domain_y);
+    }
+
+
     // Read cell
-    int myself = read_cell(source_domain, tx, ty, 0, 0,
-	                       domain_x, domain_y);
+    //int myself = read_cell(source_domain, tx, ty, 0, 0,
+	 //                      domain_x, domain_y);
     
     // TODO: Read the 8 neighbors and count number of blue and red
     int blue = 0, red = 0;
     for(int i = -1; i < 2; i++){
         for(int j = -1; j < 2; j++){
             if(i != 0 && j !=0){
-                int cell = read_cell(source_domain, tx, ty, i, j, domain_x, domain_y);
+                int cell = read_cell(data_block, threadIdx.x, threadIdx.y, i, j, blockDim.x, blockDim.y);
                 if(cell == 1){
                     red++;
                 }else if(cell == 2){
