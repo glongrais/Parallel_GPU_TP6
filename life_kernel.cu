@@ -1,4 +1,4 @@
-
+// 1512/1474
 // Reads a cell at (x+dx, y+dy)
 __device__ int read_cell(int * source_domain, int x, int y, int dx, int dy,
     unsigned int domain_x, unsigned int domain_y)
@@ -55,7 +55,7 @@ __global__ void life_kernel(int * source_domain, int * dest_domain,
             domain_x, domain_y);
     }
 
-    __syncthread();
+    __syncthreads()
 
 
     // Read cell
