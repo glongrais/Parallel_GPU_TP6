@@ -84,7 +84,7 @@ int main(int argc, char ** argv)
     CUDA_SAFE_CALL(cudaEventRecord(start, 0));
 
     // Kernel execution
-    int shared_mem_size = blocks_x * blocks_y + 2*(blocks_x+1 + blocks_y+1);
+    int shared_mem_size = (blocks_x * blocks_y + 2*(blocks_x+1 + blocks_y+1)) * sizeof(int);
     for(int i = 0; i < steps; i++) {
 	    life_kernel<<< grid, threads, shared_mem_size >>>(domain_gpu[i%2],
 	    	domain_gpu[(i+1)%2], domain_x, domain_y);
