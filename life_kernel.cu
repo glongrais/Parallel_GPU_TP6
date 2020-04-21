@@ -55,7 +55,7 @@ __global__ void life_kernel(int * source_domain, int * dest_domain,
             domain_x, domain_y);
     }
 
-    __syncthreads()
+    __syncthreads();
 
 
     // Read cell
