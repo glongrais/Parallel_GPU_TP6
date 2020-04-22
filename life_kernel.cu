@@ -19,7 +19,7 @@ __global__ void life_kernel(int * source_domain, int * dest_domain,
 
     extern __shared__ int data_block[];
 
-    data_block[(threadIdx.y+1) * blockDim.x + (threadIdx.x+1)] = read_cell(source_domain, tx, ty, 0, 0,
+    /*data_block[(threadIdx.y+1) * blockDim.x + (threadIdx.x+1)] = read_cell(source_domain, tx, ty, 0, 0,
         domain_x, domain_y);
 
     if(threadIdx.y == 0){
@@ -53,7 +53,7 @@ __global__ void life_kernel(int * source_domain, int * dest_domain,
     if(threadIdx.y == blockDim.y-1 && threadIdx.x == blockDim.x-1){
         data_block[(threadIdx.y+2) * blockDim.x + (threadIdx.x+2)] = read_cell(source_domain, tx, ty, +1, +1,
             domain_x, domain_y);
-    }
+    }*/
 
     __syncthreads();
 
