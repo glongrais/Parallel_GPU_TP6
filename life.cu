@@ -54,11 +54,12 @@ int main(int argc, char ** argv)
     int steps = 20;	// Change this to vary the number of game rounds
     
     int threads_per_block = 128;
-    int blocks_x = (domain_x + threads_per_block * cells_per_word - 1) / threads_per_block * cells_per_word;
-    int blocks_y = domain_y;
+    int blocks_x = 16;//(domain_x + threads_per_block * cells_per_word - 1) / threads_per_block * cells_per_word;
+    int blocks_y = 8;//domain_y;
     
     dim3  grid(blocks_x, blocks_y);	// CUDA grid dimensions
-    dim3  threads(threads_per_block);	// CUDA block dimensions
+    //dim3  threads(threads_per_block);	// CUDA block dimensions
+    dim3  threads(8, 16);
 
     // Allocation of arrays
     int * domain_gpu[2] = {NULL, NULL};
