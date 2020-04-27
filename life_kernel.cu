@@ -19,29 +19,38 @@ __global__ void life_kernel(int * source_domain, int * dest_domain,
 
     extern __shared__ int data_block[];
 
+    // Each thread add to the shared memory the value the cell it handle.
     data_block[(threadIdx.y+1) * (blockDim.x +2) + (threadIdx.x+1)] = read_cell(source_domain, tx, ty, 0, 0, domain_x, domain_y);
 
+    // If the thread is in the first row of the block, it add the value of the cell above it.
     if(threadIdx.y == 0){
         data_block[threadIdx.x+1] = read_cell(source_domain, tx, ty, 0, -1, domain_x, domain_y);
     }
+    // If the thread is in the first column of the block, it add the value of the cell before it.
     if(threadIdx.x == 0){
         data_block[(threadIdx.y+1) * (blockDim.x +2)] = read_cell(source_domain, tx, ty, -1, 0, domain_x, domain_y);
     }
+    // If the thread is in the last row of the block, it add the value of the cell below it.
     if(threadIdx.y == blockDim.y-1){
         data_block[(threadIdx.y+2) * (blockDim.x +2) + (threadIdx.x+1)] = read_cell(source_domain, tx, ty, 0, +1, domain_x, domain_y);
     }
+    // If the thread is in the last column of the block, it add the value of the cell after it.
     if(threadIdx.x == blockDim.x-1){
         data_block[(threadIdx.y+1) * (blockDim.x +2) + (threadIdx.x+2)] = read_cell(source_domain, tx, ty, +1, 0, domain_x, domain_y);
     }
+    // If the thread is in the first angle of the block, it add the value of the cell in up left angle.
     if(threadIdx.y == 0 && threadIdx.x == 0){
         data_block[0] = read_cell(source_domain, tx, ty, -1, -1, domain_x, domain_y);
     }
+    // If the thread is in the second angle of the block, it add the value of the cell in up right angle.
     if(threadIdx.y == 0 && threadIdx.x == blockDim.x-1){
         data_block[threadIdx.x+2] = read_cell(source_domain, tx, ty, +1, -1, domain_x, domain_y);
     }
+    // If the thread is in the third angle of the block, it add the value of the cell in down left angle.
     if(threadIdx.y == blockDim.y-1 && threadIdx.x == 0){
         data_block[(threadIdx.y+2) * (blockDim.x +2)] = read_cell(source_domain, tx, ty, -1, +1, domain_x, domain_y);
     }
+    // If the thread is in the fourth angle of the block, it add the value of the cell in down right angle.
     if(threadIdx.y == blockDim.y-1 && threadIdx.x == blockDim.x-1){
         data_block[(threadIdx.y+2) * (blockDim.x +2) + (threadIdx.x+2)] = read_cell(source_domain, tx, ty, +1, +1, domain_x, domain_y);
     }
